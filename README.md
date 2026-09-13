@@ -1,4 +1,4 @@
-# 🎥 Distributed Video Transcoder (VOD & Adaptive HLS Engine)
+# 🎥 Distributed HLS Transcoder (VOD & Adaptive Bitrate Streaming Engine)
 
 An enterprise-grade, distributed asynchronous video transcoding system built with **Go**, **Apache Kafka**, **Redis**, **FFmpeg**, and **MinIO (S3)**.
 
@@ -194,7 +194,7 @@ Each folder contains its own isolated `.env.example` template:
 ## 🗂️ Project Layout
 
 ```text
-distributed-video-transcoder/
+distributed-hls-transcoder/
 ├── api-service/              # Node.js + Express + TypeScript API gateway
 │   ├── .env.example          # Server environment template
 │   ├── src/
@@ -293,5 +293,58 @@ When moving this platform to production (e.g. AWS, GCP, or Kubernetes):
 
 ---
 
+## 🤝 Contributing
+
+Contributions are what make the open-source community an inspiring place to learn, innovate, and create. Any contributions you make are **greatly appreciated**!
+
+### Contribution Workflow
+
+1. **Fork the Repository**
+   Click the **Fork** button at the top right of the GitHub repository to create your own copy.
+
+2. **Clone & Create a Feature Branch**
+   ```bash
+   git clone https://github.com/Priyanshu-WebDev-io/distributed-hls-transcoder.git
+   cd distributed-hls-transcoder
+   git checkout -b feat/your-feature-name
+   ```
+
+3. **Make Your Changes & Test Thoroughly**
+   - Ensure the Docker infrastructure runs cleanly: `docker compose up -d`
+   - Verify TypeScript compilation in API: `cd api-service && npm run build`
+   - Verify Go worker builds without errors: `cd transcode-worker && go build ./...`
+   - Verify Web Client builds cleanly: `cd client-demo && npm run build`
+
+4. **Commit Your Changes**
+   Please follow conventional commit message standards:
+   ```bash
+   git commit -m "feat(worker): add support for AV1 codec"
+   # or
+   git commit -m "fix(api): handle missing s3 object gracefully"
+   ```
+
+5. **Push to Your Branch**
+   ```bash
+   git push origin feat/your-feature-name
+   ```
+
+6. **Open a Pull Request**
+   Submit your Pull Request targeting `main` with a clear explanation of what was changed and how it was tested.
+
+### Coding Standards & Guidelines
+
+- **Go Code (`transcode-worker`)**: Always run `gofmt -s -w .` and `go vet ./...` before committing. Ensure worker goroutines honor `context.Context` cancellation signals for graceful shutdowns.
+- **TypeScript / Node (`api-service`)**: Maintain strict typing without `any` overrides where possible. Gracefully catch and log Redis, S3, and database errors without crashing the Express process.
+- **Frontend (`client-demo`)**: Keep UI components clean and responsive using TailwindCSS. Ensure background intervals (such as progress polling) are cleared on component unmount to prevent memory leaks.
+
+---
+
 ## 📄 License
-ISC
+
+This project is licensed under the **MIT License** — see the [`LICENSE`](./LICENSE) file for details:
+
+```text
+MIT License - Copyright (c) 2026 Priyanshu
+```
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies without restriction.
