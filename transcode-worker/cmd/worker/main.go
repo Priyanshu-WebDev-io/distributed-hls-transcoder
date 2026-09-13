@@ -8,11 +8,16 @@ import (
 	"sync"
 	"syscall"
 
+	"github.com/joho/godotenv"
 	"transcode-worker/internal/config"
 	"transcode-worker/internal/pool"
 )
 
 func main() {
+	if err := godotenv.Load(); err != nil {
+		log.Println("No .env file found in transcode-worker directory, using environment variables")
+	}
+
 	minioClient := config.NewMinioClient()
 	redisClient := config.NewRedisClient()
 	vodReader := config.NewKafkaReader()
@@ -30,7 +35,7 @@ func main() {
 	}()
 
 	workerPool := pool.NewWorkerPool(vodReader, minioClient, redisClient, 4)
-	
+
 	var wg sync.WaitGroup
 	workerPool.Start(ctx, &wg)
 

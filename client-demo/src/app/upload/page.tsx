@@ -1,6 +1,8 @@
 "use client";
 import { useState } from "react";
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+
 export default function UploadPage() {
   const [file, setFile] = useState<File | null>(null);
   const [status, setStatus] = useState("");
@@ -11,7 +13,7 @@ export default function UploadPage() {
 
     try {
       // 1. Get presigned URL
-      const urlRes = await fetch("http://localhost:3001/api/upload-url", {
+      const urlRes = await fetch(`${API_URL}/api/upload-url`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ filename: file.name }),
@@ -34,7 +36,7 @@ export default function UploadPage() {
 
       // 3. Trigger transcode job via Kafka
       setStatus("Upload complete! Queuing transcode job...");
-      const transcodeRes = await fetch("http://localhost:3001/api/transcode", {
+      const transcodeRes = await fetch(`${API_URL}/api/transcode`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ filename: file.name }),
@@ -53,20 +55,36 @@ export default function UploadPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white">
       <div className="bg-gray-800 p-8 rounded-lg shadow-xl w-[500px] flex flex-col gap-6">
         <h1 className="text-2xl font-bold text-center">Upload Video (VOD)</h1>
-        <input 
-          type="file" 
-          accept="video/mp4" 
+        <input
+          type="file"
+          accept="video/mp4"
           onChange={(e) => setFile(e.target.files?.[0] || null)}
           className="p-4 border border-dashed border-gray-600 rounded bg-gray-700"
         />
-        <button 
+        <button
           onClick={handleUpload}
           disabled={!file}
           className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded transition-colors disabled:opacity-50"
         >
           Upload to Platform
         </button>
-        {status && <p className="text-center text-sm text-green-400 mt-2">{status}</p>}
+        {status && (
+          <div className="flex flex-col items-center gap-3 mt-2">
+            <p className="text-center text-sm text-green-400">{status}</p>
+            <a
+              href="/watch"
+              className="text-xs bg-purple-600/30 hover:bg-purple-600/50 text-purple-300 px-3.5 py-1.5 rounded-lg border border-purple-500/40 transition-colors"
+            >
+              Monitor Progress in Video Gallery →
+            </a>
+          </div>
+        )}
+
+        <div className="text-center pt-2 border-t border-gray-750">
+          <a href="/watch" className="text-xs text-gray-400 hover:text-white transition-colors">
+            ← Go to Video Library & Gallery
+          </a>
+        </div>
       </div>
     </div>
   );

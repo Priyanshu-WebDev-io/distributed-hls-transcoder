@@ -1,18 +1,25 @@
 import { S3Client, CreateBucketCommand, PutBucketPolicyCommand } from "@aws-sdk/client-s3";
 
+export const S3_ENDPOINT = process.env.S3_ENDPOINT || "http://localhost:9000";
+export const AWS_REGION = process.env.AWS_REGION || "us-east-1";
+export const S3_ACCESS_KEY = process.env.S3_ACCESS_KEY || "minio_admin";
+export const S3_SECRET_KEY = process.env.S3_SECRET_KEY || "minio_password";
+export const RAW_BUCKET = process.env.RAW_BUCKET || "raw-videos";
+export const PUBLIC_BUCKET = process.env.PUBLIC_BUCKET || "public-videos";
+
 export const s3Client = new S3Client({
-  region: "us-east-1",
-  endpoint: "http://localhost:9000",
+  region: AWS_REGION,
+  endpoint: S3_ENDPOINT,
   credentials: {
-    accessKeyId: "minio_admin",
-    secretAccessKey: "minio_password",
+    accessKeyId: S3_ACCESS_KEY,
+    secretAccessKey: S3_SECRET_KEY,
   },
   forcePathStyle: true,
 });
 
 export const initializeStorage = async () => {
-  const buckets = ["raw-videos", "public-videos"];
-  
+  const buckets = [RAW_BUCKET, PUBLIC_BUCKET];
+
   for (const bucket of buckets) {
     try {
       try {
@@ -25,7 +32,7 @@ export const initializeStorage = async () => {
           throw err;
         }
       }
-      
+
       if (bucket === "public-videos") {
         const policy = {
           Version: "2012-10-17",
